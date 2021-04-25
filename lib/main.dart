@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gifimage/flutter_gifimage.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:giphy_app/constants/gif_bank.dart';
+
+GifBank gifBank = GifBank();
 
 void main() {
   runApp(MyApp());
@@ -27,17 +30,36 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   GifController controller;
   String currentGif = 'no';
-  double frameNum = 14.0;
+  String title = 'Waiting to download';
+  String gifPath = '';
+  String gifUrl =
+      'https://firebasestorage.googleapis.com/v0/b/app-lsc-7310d.appspot.com/o/antecedentes_familiares_23.gif?alt=media';
 
   void initState() {
     controller = GifController(vsync: this);
     super.initState();
   }
 
+  getFrames(String gif) {}
+
   playGif(String gifToPlay) async {
+    double frameNum = 0.0;
     controller.value = 0;
-    controller.animateTo(frameNum - 1,
-        duration: Duration(milliseconds: (160 * (frameNum - 1)).toInt()));
+
+    gifBank.gifs.forEach((gif) {
+      if (gifToPlay == gif.name) {
+        frameNum = gif.frames - 1;
+        controller.animateTo(frameNum,
+            duration: Duration(milliseconds: (140 * frameNum).toInt()));
+      }
+    });
+  }
+
+  Widget loadingWidget() {
+    if (title == 'Downloading...') {
+      return CircularProgressIndicator();
+    }
+    return Container();
   }
 
   @override
@@ -50,28 +72,38 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            CachedNetworkImage(
-              imageUrl:
-                  'https://firebasestorage.googleapis.com/v0/b/app-lsc-7310d.appspot.com/o/${currentGif}_${frameNum.toInt()}.gif?alt=media',
-              imageBuilder: (context, imageProvider) => GifImage(
-                controller: controller,
-                image: imageProvider,
-              ),
-              placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+            Center(child: Text(title)),
+            SizedBox(
+              height: 20.0,
             ),
+            gifPath != ''
+                ? Card(
+                    child: GifImage(
+                      controller: controller,
+                      image: AssetImage(gifPath),
+                    ),
+                    elevation: 7,
+                  )
+                : loadingWidget(),
             SizedBox(
               height: 20.0,
             ),
             GestureDetector(
-              onTap: () {
-                playGif(currentGif);
+              onTap: () async {
+                setState(() => title = 'Downloading...');
+                var fetchedFile =
+                    await DefaultCacheManager().getSingleFile(gifUrl);
+                setState(() {
+                  title = 'File fetched: ${fetchedFile.path}';
+                  gifPath = fetchedFile.path;
+                });
+                playGif('antecedentes_familiares');
               },
               child: Container(
                 color: Colors.blueGrey,
                 padding: EdgeInsets.all(5.0),
                 child: Text(
-                  'Play Local Gif',
+                  'Download Gif',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
@@ -82,26 +114,3 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     );
   }
 }
-
-/*Card(
-              child: GifImage(
-                controller: controller,
-                image: AssetImage('images/${currentGif}_$frameNum.gif'),
-              ),
-              elevation: 7,
-            ),*/
-/*CachedNetworkImage(
-              imageUrl:
-                  'https://firebasestorage.googleapis.com/v0/b/app-lsc-7310d.appspot.com/o/${currentGif}_${frameNum.toInt()}.gif?alt=media',
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
-                      colorFilter:
-                          ColorFilter.mode(Colors.red, BlendMode.colorBurn)),
-                ),
-              ),
-              placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
-            ),*/

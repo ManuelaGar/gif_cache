@@ -9,9 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cached_network_image: ^3.0.0
   cupertino_icons: ^1.0.2
   flutter_gifimage: ^1.0.1
-  cached_network_image: ^3.0.0
+  flutter_cache_manager: ^3.0.1
 
 
 dev_dependencies:
