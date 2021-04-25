@@ -7,6 +7,10 @@ class GifBank {
       frames: 23,
     ),
     Gif(
+      name: 'antecedentes_ginecobstetricos',
+      frames: 25,
+    ),
+    Gif(
       name: 'apellidos',
       frames: 15,
     ),

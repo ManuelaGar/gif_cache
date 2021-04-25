@@ -32,8 +32,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   String currentGif = 'no';
   String title = 'Waiting to download';
   String gifPath = '';
-  String gifUrl =
-      'https://firebasestorage.googleapis.com/v0/b/app-lsc-7310d.appspot.com/o/antecedentes_familiares_23.gif?alt=media';
+  String gifUrl = '';
 
   void initState() {
     controller = GifController(vsync: this);
@@ -90,7 +89,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             ),
             GestureDetector(
               onTap: () async {
-                setState(() => title = 'Downloading...');
+                setState(() {
+                  title = 'Downloading...';
+                  gifUrl =
+                      'https://firebasestorage.googleapis.com/v0/b/app-lsc-7310d.appspot.com/o/antecedentes_familiares_23.gif?alt=media';
+                });
                 var fetchedFile =
                     await DefaultCacheManager().getSingleFile(gifUrl);
                 setState(() {
@@ -104,6 +107,33 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 padding: EdgeInsets.all(5.0),
                 child: Text(
                   'Download Gif',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            GestureDetector(
+              onTap: () async {
+                setState(() {
+                  title = 'Downloading...';
+                  gifUrl =
+                      'https://firebasestorage.googleapis.com/v0/b/app-lsc-7310d.appspot.com/o/antecedentes_ginecobstetricos_25.gif?alt=media';
+                });
+                var fetchedFile =
+                    await DefaultCacheManager().getSingleFile(gifUrl);
+                setState(() {
+                  title = 'File fetched: ${fetchedFile.path}';
+                  gifPath = fetchedFile.path;
+                });
+                playGif('antecedentes_ginecobstetricos');
+              },
+              child: Container(
+                color: Colors.green,
+                padding: EdgeInsets.all(5.0),
+                child: Text(
+                  'Download Gif 2',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
