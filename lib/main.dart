@@ -29,7 +29,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   GifController controller;
-  String currentGif = 'no';
   String title = 'Waiting to download';
   String gifPath = '';
   String gifUrl = '';
@@ -39,14 +38,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     super.initState();
   }
 
-  getFrames(String gif) {}
-
-  playGif(String gifToPlay) async {
+  playGif(String gifToPlay, bool isLocal) async {
     double frameNum = 0.0;
     controller.value = 0;
 
     gifBank.gifs.forEach((gif) {
       if (gifToPlay == gif.name) {
+        if (isLocal) {
+          setState(() => gifPath = 'images/${gif.image(gif.name, gif.frames)}');
+        }
+
         frameNum = gif.frames - 1;
         controller.animateTo(frameNum,
             duration: Duration(milliseconds: (140 * frameNum).toInt()));
@@ -88,6 +89,22 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               height: 20.0,
             ),
             GestureDetector(
+              onTap: () {
+                playGif('no', true);
+              },
+              child: Container(
+                color: Colors.blue,
+                padding: EdgeInsets.all(5.0),
+                child: Text(
+                  'Local Gif',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            GestureDetector(
               onTap: () async {
                 setState(() {
                   title = 'Downloading...';
@@ -100,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   title = 'File fetched: ${fetchedFile.path}';
                   gifPath = fetchedFile.path;
                 });
-                playGif('antecedentes_familiares');
+                playGif('antecedentes_familiares', false);
               },
               child: Container(
                 color: Colors.blueGrey,
@@ -127,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   title = 'File fetched: ${fetchedFile.path}';
                   gifPath = fetchedFile.path;
                 });
-                playGif('antecedentes_ginecobstetricos');
+                playGif('antecedentes_ginecobstetricos', false);
               },
               child: Container(
                 color: Colors.green,
