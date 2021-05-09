@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -7,7 +5,8 @@ import 'package:giphy_app/constants/gif_bank.dart';
 
 GifBank gifBank = GifBank();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
@@ -34,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   String title = 'Waiting to download';
   String gifPath = '';
   String gifUrl = '';
-  File filePath;
+  var bytes;
 
   void initState() {
     controller = GifController(vsync: this);
@@ -85,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       controller: controller,
                       image: gifPath.contains('images/')
                           ? AssetImage(gifPath)
-                          : FileImage(filePath),
+                          : MemoryImage(bytes),
                     ),
                     elevation: 7,
                   )
@@ -112,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             GestureDetector(
               onTap: () async {
                 setState(() {
+                  imageCache.clear();
                   title = 'Downloading...';
                   gifUrl =
                       'https://firebasestorage.googleapis.com/v0/b/app-lsc-7310d.appspot.com/o/antecedentes_familiares_23.gif?alt=media';
@@ -121,10 +121,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 setState(() {
                   title = 'File fetched: ${fetchedFile.path}';
                   gifPath = fetchedFile.path;
-                  filePath = fetchedFile;
+                  bytes = fetchedFile.readAsBytesSync();
                 });
-                print(gifPath);
-                print(filePath);
 
                 playGif('antecedentes_familiares', false);
               },
@@ -143,6 +141,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             GestureDetector(
               onTap: () async {
                 setState(() {
+                  imageCache.clear();
                   title = 'Downloading...';
                   gifUrl =
                       'https://firebasestorage.googleapis.com/v0/b/app-lsc-7310d.appspot.com/o/antecedentes_ginecobstetricos_25.gif?alt=media';
@@ -152,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 setState(() {
                   title = 'File fetched: ${fetchedFile.path}';
                   gifPath = fetchedFile.path;
-                  filePath = fetchedFile;
+                  bytes = fetchedFile.readAsBytesSync();
                 });
 
                 playGif('antecedentes_familiares', false);
