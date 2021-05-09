@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -32,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   String title = 'Waiting to download';
   String gifPath = '';
   String gifUrl = '';
+  File filePath;
 
   void initState() {
     controller = GifController(vsync: this);
@@ -80,7 +83,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 ? Card(
                     child: GifImage(
                       controller: controller,
-                      image: AssetImage(gifPath),
+                      image: gifPath.contains('images/')
+                          ? AssetImage(gifPath)
+                          : FileImage(filePath),
                     ),
                     elevation: 7,
                   )
@@ -116,7 +121,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 setState(() {
                   title = 'File fetched: ${fetchedFile.path}';
                   gifPath = fetchedFile.path;
+                  filePath = fetchedFile;
                 });
+                print(gifPath);
+                print(filePath);
+
                 playGif('antecedentes_familiares', false);
               },
               child: Container(
@@ -143,8 +152,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 setState(() {
                   title = 'File fetched: ${fetchedFile.path}';
                   gifPath = fetchedFile.path;
+                  filePath = fetchedFile;
                 });
-                playGif('antecedentes_ginecobstetricos', false);
+
+                playGif('antecedentes_familiares', false);
               },
               child: Container(
                 color: Colors.green,
