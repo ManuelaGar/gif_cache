@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -34,6 +35,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   String gifPath = '';
   String gifUrl = '';
   var bytes;
+
+  bool isGif1Downloaded = false;
+  bool isGif2Downloaded = false;
 
   void initState() {
     controller = GifController(vsync: this);
@@ -124,6 +128,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   bytes = fetchedFile.readAsBytesSync();
                 });
 
+                if (!isGif1Downloaded) {
+                  setState(() {
+                    isGif1Downloaded = true;
+                  });
+                  Timer(const Duration(seconds: 2),
+                      () => playGif('antecedentes_familiares', false));
+                }
                 playGif('antecedentes_familiares', false);
               },
               child: Container(
@@ -154,7 +165,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   bytes = fetchedFile.readAsBytesSync();
                 });
 
-                playGif('antecedentes_familiares', false);
+                if (!isGif2Downloaded) {
+                  setState(() {
+                    isGif2Downloaded = true;
+                  });
+                  Timer(const Duration(seconds: 2),
+                      () => playGif('antecedentes_ginecobstetricos', false));
+                }
+                playGif('antecedentes_ginecobstetricos', false);
               },
               child: Container(
                 color: Colors.green,
