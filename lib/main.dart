@@ -29,6 +29,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   String currentGif = 'no';
   double frameNum = 14.0;
 
+  String gifPath;
+
   void initState() {
     controller = GifController(vsync: this);
     super.initState();
@@ -51,27 +53,45 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             CachedNetworkImage(
-              imageUrl:
-                  'https://firebasestorage.googleapis.com/v0/b/app-lsc-7310d.appspot.com/o/${currentGif}_${frameNum.toInt()}.gif?alt=media',
-              imageBuilder: (context, imageProvider) => GifImage(
-                controller: controller,
-                image: imageProvider,
-              ),
               placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+              imageUrl: gifPath,
             ),
             SizedBox(
               height: 20.0,
             ),
             GestureDetector(
               onTap: () {
+                setState(() {
+                  gifPath =
+                      'https://firebasestorage.googleapis.com/v0/b/app-lsc-7310d.appspot.com/o/antecedentes_familiares_23.gif?alt=media';
+                });
                 playGif(currentGif);
               },
               child: Container(
                 color: Colors.blueGrey,
                 padding: EdgeInsets.all(5.0),
                 child: Text(
-                  'Play Local Gif',
+                  'Download Gif 1',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  gifPath =
+                      'https://firebasestorage.googleapis.com/v0/b/app-lsc-7310d.appspot.com/o/antecedentes_ginecobstetricos_25.gif?alt=media';
+                });
+                playGif(currentGif);
+              },
+              child: Container(
+                color: Colors.blueGrey,
+                padding: EdgeInsets.all(5.0),
+                child: Text(
+                  'Download Gif 2',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
